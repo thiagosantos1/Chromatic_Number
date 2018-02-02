@@ -1,0 +1,8 @@
+cid0000 cid0001
+cid0000 cid0003
+cid0000 cid0004
+cid0001 cid0005
+cid0001 cid0002
+cid0002 cid0003
+cid0003 cid0004
+cid0004 cid0005
