@@ -5,12 +5,14 @@
 #include <ctype.h>
 
 
-#define COLORS		 3 // size of the adjacency Matrix
+#define COLORS_FIXED		 4 // size of the adjacency Matrix
 #define X		 255 // Max size of a line in a file
 #define NO_COLOR	-1
 #define CHUNK  		16
 #define COLUMNS   2
 
+const char * COLOR_USED[10]={"Red", "Blue", "Green", "Black", "White", "Yellow", "Grey", "Cyan", "Pink", "Purple"};
+int COLORS = 0;
 
 // define a struct to be use as adjacency list
 typedef struct
@@ -22,7 +24,6 @@ typedef struct
 
 
 short * *adj_mtx; // 0-1 if both nodes has an edge // gonna alocate 
-short *color; // has size of N, and each position represents each class. Then, each position gets a color(0,1,2...Colors)
 short * *color_arc; // matrix Nx2 that has the color assigned and the colors remainings for each node
 short * *backup_color; // matrix NxN to hold a backup for each state(vertex), that way you can come back to the orig
 ADJ_LIST * adj_list;
@@ -30,20 +31,12 @@ short N;        // number of vertexes // dinymic allocated, based on the name of
 
 void init_vertex(char * filename); // initialize N, that represents how many vertex in the graph
 void init_adjList(); // initialize the adj list array
-void init_colors();
 void init_matrix();
 
 // function to initialize the color_arc matrix, that works with forward checking CSP constraint
 void init_color_arc();
 void init_backup_color();
-void print_matrix();
-// function based only on the adjancency matrix to determine if it's safe to color the vertex v with color c
-int isSafe_matrix (int v,  int c);
-// function based only on the adjancency list to determine if it's safe to color the vertex v with color c - faster 
-int isSafe_adjList(int v,  int c);
-int dfs_coloring(int v);
 int coloring_CSP_constraint(int v, int deph);
-void printSolution();
 void printSolution_CSP();
 
 int how_many_bits_sets(int num); // return how many bits are set in a number // how many colors available
@@ -58,45 +51,32 @@ void backup_status(int v); // on color_arc[0 to N][1], copy what is on backup_co
 void return_status(int v); // return the status to color_arc, from what it was when v got a color and made a backup
 
 int foundSolution(); // search to check if all vertices has been colored
+
 int main(int argc, char * argv[])
 {
-  if(argc<2){
-    printf("File name <%s usage>\n", argv[0]);
+  if(argc<3){
+    fprintf(stderr, "\nFile name <%s usage> file.nums && number of available colors\n", argv[0]);
     return 0;
   }
+  COLORS = atoi(argv[2]);
   if(COLORS <1){
-    printf("No solutions for %d colors\n", COLORS);
+    fprintf(stderr, "No solutions for %d colors\n", COLORS);
     return 0;
   }
   
   init_vertex(argv[1]); // initialize how many vertex there are in the graph, based on the name of the file
-  init_colors();
   init_matrix();
   init_adjList();
   init_color_arc();
   
   char * filename = argv[1], *token;
   FILE * fp = fopen(filename, "r");
-  char class_1[X], class_2[X];
+  if(fp == NULL){
+    fprintf(stderr, "\nError opening the file\n");
+    exit(0);
+  }
   int class1, class2;
-  int num_class1=0, num_class2=0;
 
-  // while( fscanf(fp,"%s %s", class_1, class_2) == 2){
-  //   // class 1
-  //   token = strtok(class_1, "cid");
-  //   num_class1 = atoi(token);
-    
-  //   // class 2
-  //   token = strtok(class_2, "cid");
-  //   num_class2 = atoi(token);
-  //   // add arc 
-  //   adj_mtx[num_class1][num_class2] = 1;
-  //   adj_mtx[num_class2][num_class1] = 1;
-    
-  //   update_alist(num_class1,num_class2);
-  //   update_alist(num_class2,num_class1);
-    
-  // }
 
   while( fscanf(fp,"%d %d", &class1, &class2) == 2){
    
@@ -108,72 +88,23 @@ int main(int argc, char * argv[])
     update_alist(class2,class1);
     
   }
+
   // save the vertex with more degrees, to start the search
   int vertex_hightest_deg = highest_degree();
 
-  // Call dfs_coloring() for vertex 0
-//   if ( (dfs_coloring(0)) <=0 ){
-//     printf("Solution does not exist\n");
-//     return -1;
-//   }
    if ( (coloring_CSP_constraint(vertex_hightest_deg,0)) <=0 ){
-    printf("\nSolution does not exist\n");
+    fprintf(stderr, "\nSolution does not exist for %d colors\n", COLORS);
     return -1;
   }
   
   // if there is a solution for N colors
   printSolution_CSP();
+  fprintf(stderr, "\nThere is a Solution for %d colors\n\n", COLORS);
   fclose(fp);
   return 0;
 }
 
 
-int isSafe_adjList(int v,  int c)
-{
-  int i,u;
-
-  for(i=0;i<adj_list[v].degre;i++){
-    u = adj_list[v].nbrs[i];
-    if(color[u] == c)
-      return -1;
-  }
-  return 1;
-  
-}
-int isSafe_matrix(int v,  int c)
-{
-  for (int i = 0; i < N; i++){
-      if (adj_mtx[v][i] && c == color[i]){
-          return -1; // false
-        }   
-  }
-  return 1;
-}
-
-int dfs_coloring(int v)
-{
-  if (v == N) // if all vertices has been colored
-      return 1;
-
-  /* Consider this vertex v and try different colors */
-  for (int c = 0; c < COLORS; c++){
-      /* Check if assignment of color c to v is fine*/
-      if (isSafe_adjList(v, c) >0)
-      {
-         color[v] = c;
-
-         /* recur to assign colors to rest of the vertices */
-         if (dfs_coloring(v+1) >0 )
-           return 1;
-
-          /* If assigning color c doesn't lead to a solution
-             then remove it */
-         color[v] = NO_COLOR;
-      }
-  }
-  /* If no color can be assigned to this vertex then return false */
-  return -1;
-}
 
 // start by picking up the node with highest degre
 int coloring_CSP_constraint(int v, int deph)
@@ -217,19 +148,22 @@ int coloring_CSP_constraint(int v, int deph)
   
   /* If no color can be assigned to this vertex then return false */
   return -1;
+
 }
 
+// back up only the neighbors of Vertex
 void backup_status(int vertex)
 {
 
-  for (int i = 0; i < N; i++)
-    backup_color[vertex][i] = color_arc[i][COLUMNS-1];
+  for(int i = 0; i < adj_list[vertex].degre; i++)
+    backup_color[vertex][ adj_list[vertex].nbrs[i] ] = color_arc[ adj_list[vertex].nbrs[i] ][COLUMNS-1];
 }
 
 void return_status(int vertex)
 {
-  for (int i = 0; i < N; i++)
-    color_arc[i][COLUMNS-1] = backup_color[vertex][i];
+
+   for(int i = 0; i < adj_list[vertex].degre; i++)
+    color_arc[ adj_list[vertex].nbrs[i] ][COLUMNS-1] = backup_color[vertex][ adj_list[vertex].nbrs[i] ];
 
   color_arc[vertex][COLUMNS-2] = NO_COLOR;
 }
@@ -243,20 +177,11 @@ int foundSolution()
   return 1;
 }
 
-/* A utility function to print solution */
-void printSolution()
-{
-  printf("The solution for the problem is:\n");
-  for (int i = 0; i < N; i++)
-    printf(" %d ", color[i]);
-  printf("\n");
-}
-
 void printSolution_CSP()
 {
   printf("\n\t*** The solution for the problem is ***\n\n");
   for (int i = 0; i < N; i++)
-    printf("Vertex %d got colored with %hi\n", i, color_arc[i][COLUMNS-2]);
+    fprintf(stderr,"Vertex %d got colored with %s\n", i, COLOR_USED[ color_arc[i][COLUMNS-2] ]);
   printf("\n");
 }
 
@@ -294,6 +219,17 @@ int pick_next_vertex()
   return vertex;
 }
 
+int how_many_bits_sets(int num)
+{
+  int result =0;
+  for (int i = 0; i < COLORS; i++){
+    if (num & (1 << i) )
+      result++;
+  }
+
+  return result;
+}
+
 int domain_reduction(int vertex, int color)
 {
   int i, neighbor_index;
@@ -310,16 +246,7 @@ int isColorAvailable(int v, int c)
 {
   return (color_arc[v][COLUMNS-1] & (1 << c) );
 }
-int how_many_bits_sets(int num)
-{
-  int result =0;
-  for (int i = 0; i < COLORS; i++){
-    if (num & (1 << i) )
-      result++;
-  }
 
-  return result;
-}
 int highest_degree()
 {
   int i, highest = 0;
@@ -351,15 +278,6 @@ void init_vertex(char * filename)
   N = atoi(str);
 }
 
-void init_colors()
-{
-
-  color = malloc(N* sizeof(short *));
-
-  for(int i=0; i<N; i++)
-      color[i] = NO_COLOR; // no color set yet
-
-}
 void init_color_arc()
 {
 
@@ -417,32 +335,6 @@ void init_matrix()
       adj_mtx[i][j] = 0;
     }
   }
-}
-
-void print_matrix()
-{
-  printf("\t\t*** Matrix ***\n");
-  for(int i=0; i<N; i++){
-    for(int j=0; j<N; j++){
-      printf("%d ",adj_mtx[i][j]);
-    }
-    printf("\n");
-  }
-
-  printf("\t\t*** Neighbors ***\n");
-
-  for (int i = 0; i < N; i++){
-  
-    printf("Vertex %d, Neighbors: ", i ); 
-    for (int j = 0; j < adj_list[i].degre; j++){
-      printf("%d ", adj_list[i].nbrs[j] );
-      
-    }
-    printf("\n");
-  }
-
-  printf("\n\n\n");
-  
 }
 
 
