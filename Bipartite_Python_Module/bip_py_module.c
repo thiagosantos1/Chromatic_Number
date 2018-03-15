@@ -6,7 +6,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h> 
-#include <python3.6m/Python.h> 
+#include <python3.5/Python.h> 
 
 #define CHUNK  		1
 #define X		    255 // Max size of a line in a file
