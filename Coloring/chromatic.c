@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include <ctype.h>
+#include <ctype.h> 
 
 
 #define COLORS_FIXED		 4 // size of the adjacency Matrix
@@ -70,7 +70,7 @@ int main(int argc, char * argv[])
   init_adjList();
   init_color_arc();
   
-  char * filename = argv[1], *token;
+  char * filename = argv[1];
   FILE * fp = fopen(filename, "r");
   if(fp == NULL){
     fprintf(stderr, "\nError opening the file\n");
