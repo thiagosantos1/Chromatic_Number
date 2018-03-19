@@ -43,15 +43,14 @@ static PyObject *py_check_bip(PyObject *self, PyObject *args)
 	if(!PyArg_ParseTuple(args,"s",&file_name)){
 		fprintf(stderr,"PyArg_ParseTuple error\n");
     	return 0;
-  }
+  	}
 
 
 
 	init_vertex(file_name); // initialize how many vertex there are in the graph, based on the name of the file
 	init_adjList();
 
-	const char * filename = argv[1];
-	FILE * fp = fopen(filename, "r");
+	FILE * fp = fopen(file_name, "r");
 	if(fp == NULL){
 		fprintf(stderr, "\nError opening the file\n");
 		exit(0);
@@ -214,7 +213,7 @@ int get_vertex_not_colored()
 // Paython Extention
 
 static PyMethodDef simpleMethods[]={
-  {"py_check_bip", py_SumList, METH_VARARGS, "py_check_bip"}
+  {"py_check_bip", py_check_bip, METH_VARARGS, "py_check_bip"}
 };
 
 static struct PyModuleDef bip_py_module = {
@@ -222,7 +221,7 @@ static struct PyModuleDef bip_py_module = {
   "bip_py_module",
   "Check if graph is bipartite",
   -1,
-  bip_py_module
+  simpleMethods
 };
 
 PyMODINIT_FUNC
