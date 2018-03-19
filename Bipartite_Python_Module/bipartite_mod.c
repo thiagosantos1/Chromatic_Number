@@ -27,85 +27,19 @@ typedef struct
 ADJ_LIST * adj_list;
 short N;        // number of vertexes // dinymic allocated, based on the name of the program
 
-void init_vertex(const char * filename); // initialize N, that represents how many vertex in the graph
-void init_adjList(); // initialize the adj list array
+void init_vertex(int num_vert); // initialize N, that represents how many vertex in the graph
+void init_adjList(void); // initialize the adj list array
 void update_alist(int u, int v);
-void display_graph();
-int get_vertex_not_colored(); // return a vertex that did not get colored after dfs
+void display_graph(void);
+int get_vertex_not_colored(void); // return a vertex that did not get colored after dfs
 int bad_neighbors(int vertex); // return 1 if any neighbor of vertex got the same color as him
 //color vertex with color 1 or 2, oposite of the previous call(parent). Then checks if any
 //					  neighbor got same color. If so, return false 
 int dfs_bipartite_check(int vertex, int color); 
-int main(int argc, char const *argv[])
-{
-  if(argc<2){
-    fprintf(stderr, "\nFile name <%s usage> file.nums\n", argv[0]);
-    return 0;
-  }
-  init_vertex(argv[1]); // initialize how many vertex there are in the graph, based on the name of the file
-  init_adjList();
-  
-  const char * filename = argv[1];
-  FILE * fp = fopen(filename, "r");
-  if(fp == NULL){
-    fprintf(stderr, "\nError opening the file\n");
-    exit(0);
-  }
-  int class1, class2;
-  
-  
-  while( fscanf(fp,"%d %d", &class1, &class2) == 2){
-    // update adj list for each arc
-    update_alist(class1,class2);
-    update_alist(class2,class1);
-    
-  }
-  
-  int vertex =0, compontent=1, result = 0, vertex_not_colered = -1;
-  
-  
-  for(;;){ // make sure it runs until cover all edges
-    result = dfs_bipartite_check(vertex, Color_1);
-    if(result <=0){ // you are then sure it's not bipartite
-      printf("Graph is not bipartite\n");
-      break;
-    }
-    
-    else{ // it may be a disconected graph. Then, it may be a false positive
-      
-      // then, check if everybody got a color. If so, you are sure it's bipartite. If not, have to run again the dfs
-      // from that node withot a color
-      vertex_not_colered = get_vertex_not_colored();
-      if(vertex_not_colered >=0){
-	printf("Graph is not connected, running dfs again for compontent %d and vertex %d.....\n",++compontent, vertex_not_colered);
-	vertex = vertex_not_colered;
-      }
-      else{ // you are then sure that everybody got colored and it's bipartite
-	printf("Graph is bipartite\n");
-	break;
-      }
-      
-    }
-  }
-  //display_graph();
-  return 0;
-}
 
-
-void init_vertex(const char * filename)
+void init_vertex(int num_vert)
 {
-  char *substr = "biptest";
-  char *result = strstr(filename, substr);
-  int pos = result - filename;
-  
-  char str[20];
-  int index =0;
-  for(int i=pos; filename[i] ; i++){
-    if(isdigit(filename[i])){
-      str[index++] = filename[i];
-    }
-  }
-  N = atoi(str);
+  N = num_vert;
 }
 
 void init_adjList()

@@ -8,8 +8,8 @@
 #include <ctype.h> 
 
 #define CHUNK  		1
-#define X		255 // Max size of a line in a file
-#define NO_COLOR 	-1
+#define X		    255 // Max size of a line in a file
+#define NO_COLOR	-1
 // used to assigned one color to each neighbor. If at any time cannot color, it means it's not bipartite
 #define Color_1 	1
 #define Color_2		2
@@ -33,7 +33,7 @@ void update_alist(int u, int v);
 void display_graph();
 int get_vertex_not_colored(); // return a vertex that did not get colored after dfs
 int bad_neighbors(int vertex); // return 1 if any neighbor of vertex got the same color as him
-//color vertex with color 1 or 2, oposite of the previous call(parent). Then checks if any
+int dfs_bip_check(int vertex, int color); //color vertex with color 1 or 2, oposite of the previous call(parent). Then checks if any
 //					  neighbor got same color. If so, return false 
 int dfs_bipartite_check(int vertex, int color); 
 int main(int argc, char const *argv[])
@@ -63,6 +63,12 @@ int main(int argc, char const *argv[])
   
   int vertex =0, compontent=1, result = 0, vertex_not_colered = -1;
   
+//   result = dfs_bip_check(vertex, Color_1);
+//   if(result <=0){ // you are then sure it's not bipartite
+//     printf("Graph is not bipartite\n");
+//   }else // you are then sure it's not bipartite
+//     printf("Graph is bipartite\n");
+//   
   
   for(;;){ // make sure it runs until cover all edges
     result = dfs_bipartite_check(vertex, Color_1);
@@ -77,7 +83,7 @@ int main(int argc, char const *argv[])
       // from that node withot a color
       vertex_not_colered = get_vertex_not_colored();
       if(vertex_not_colered >=0){
-	printf("Graph is not connected, running dfs again for compontent %d and vertex %d.....\n",++compontent, vertex_not_colered);
+	printf("Graph is not connected, running dfs again for compontent %d.....\n",++compontent);
 	vertex = vertex_not_colered;
       }
       else{ // you are then sure that everybody got colored and it's bipartite
@@ -88,6 +94,9 @@ int main(int argc, char const *argv[])
     }
   }
   //display_graph();
+  vertex = 0;
+  if(dfs_bipartite_check(vertex, Color_1) >=0)
+    printf("Graph is bipartite\n");
   return 0;
 }
 
@@ -148,6 +157,39 @@ void display_graph()
     }
     printf("\n\n");
   }
+}
+
+
+int dfs_bip_check(int vertex, int color)
+{
+  int i, vert_ngbr;
+  // color vertex
+  adj_list[vertex].color = color;
+  // set inverse for next neighbor
+  color = color==Color_1 ? Color_2:Color_1;
+  
+  if (bad_neighbors(vertex) >=1){ // after colored, if any neighbor got same colored
+    // for cases of not connected graph, we may wanna make sure that both colors makes a conflict
+    
+    // invert then again
+    color = color==Color_1 ? Color_2:Color_1;
+    adj_list[vertex].color = color;
+    // set inverse for next neighbor
+    color = color==Color_1 ? Color_2:Color_1;
+    if (bad_neighbors(vertex) >=1)
+      return -1;
+  }
+  
+  // for all neighbors, call dfs 
+  for(i=0; i<adj_list[vertex].size; i++){
+    vert_ngbr = adj_list[vertex].nbrs[i];
+    if(adj_list[vert_ngbr].color == NO_COLOR){
+      return dfs_bip_check(vert_ngbr,color);
+    }
+  }
+  
+  return 1;
+  
 }
 
 int dfs_bipartite_check(int vertex, int color)
