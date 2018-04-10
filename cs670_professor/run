@@ -1,0 +1,4 @@
+for id in {1..24}
+do
+  ./step2 $id
+done

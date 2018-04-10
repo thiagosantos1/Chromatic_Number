@@ -11,7 +11,7 @@ void display_graph(void);
 int get_vertex_not_colored(void); 
 int bad_neighbors(int vertex); 
 int dfs_bipartite_check(int vertex, int color); 
-//int processAdjlist(PyObject *it, int **pli);
+int processAdjlist(PyObject *it, int **pli);
 int processEdgelist(PyObject *it, int **pli);
 
 static PyObject *py_isBipartite(PyObject *self, PyObject *args, PyObject *givenkeys)
@@ -19,20 +19,19 @@ static PyObject *py_isBipartite(PyObject *self, PyObject *args, PyObject *givenk
   PyObject *alistobj = 0,*elistobj = 0,*it;
   int i, n, *li;
   static char *keys[] = {"adjlist", "edgelist", NULL};
- // if(!PyArg_ParseTupleAndKeywords(args, givenkeys, "|OO", keys, &alistobj, &elistobj)){
-   if(!PyArg_ParseTupleAndKeywords(args, givenkeys, "|OO", keys, &elistobj)){
+  if(!PyArg_ParseTupleAndKeywords(args, givenkeys, "|OO", keys, &alistobj, &elistobj)){
+   //if(!PyArg_ParseTupleAndKeywords(args, givenkeys, "|OO", keys,  &elistobj)){
     fprintf(stderr,"PyArg_ParseTuple error\n");
     return 0;
   }
   
-//   if(alistobj){
-//     it = PyObject_GetIter(alistobj);
-//     fprintf(stderr,"An adjacency list.\n");
-//     n = processAdjlist(it, &li);
-//   } else if(elistobj){
-  if(elistobj){
+  if(alistobj){
+    it = PyObject_GetIter(alistobj);
+    fprintf(stderr,"An adjacency list.\n");
+    n = processAdjlist(it, &li);
+  } else if(elistobj){
     it = PyObject_GetIter(elistobj);
-    //fprintf(stderr,"An edge list.\n");
+    fprintf(stderr,"An edge list.\n");
     n = processEdgelist(it, &li);
   } else {
     return Py_False;

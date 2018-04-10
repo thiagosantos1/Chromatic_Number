@@ -1,0 +1,25 @@
+
+A good problem to use to get started:
+
+  problem040: the chromatic number is 6
+  problem080: the chromatic number is 5
+
+A hard problem:
+
+  problem165: the chromatic number is 3 (3-colorings are hard to find)
+  problem216: the chromatic number is 4
+
+Check the modification times for the log files in this directory.  This
+was the problem started in class with 24 processes.  It finished halfway
+through the next class.
+
+A very hard problem:
+
+  problem203: the chromatic number is 5 (5-colorings are hard to find)
+
+The last problem took 5 days on 200+ processors.  The program that was
+used is the fastest program I know about.  It was developed in Belgium
+at the University of Ghent.  The graph is one that I found several years
+ago for a different problem.  The computer used at Ghent to find the
+coloring is a bit faster than our CS server (maybe 20% faster per core).
+
