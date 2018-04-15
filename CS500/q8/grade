@@ -1,0 +1,13 @@
+Quiz #8:
+q1:
+q2:
+q3:
+-1 output of program (q3) is not correct for input '1 2 3':
+------ Yours: ------
+1,2,3 -> 01200000
+---- Reference: ----
+1,2,3 -> 01200003
+--------------------
+ - Bit-masks are incorrect.
+
+9.00 out of 10 Points.
