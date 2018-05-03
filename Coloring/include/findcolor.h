@@ -27,7 +27,7 @@ typedef
 uchar;
 
 typedef struct userdata {
-  int n;           // order of the graph
+  int order;           // order of the graph before n
   char *filename;  // file name
 } USER_PARAMS;
 
@@ -38,11 +38,15 @@ typedef struct
 } ADJ_LIST;
 
 typedef struct graphdata {
-  int n,m;        // order and size
+  int order; //n
+  int size;    //m
   uchar **a;      // adjacency matrix
   int *elist;     // list of edges, two entries per edge
   int *deg;       // vertex degrees
   int *coloring;  // best coloring found
+  int maxdegree;   // save the max degree of graph
+  int is_graph_connected; // 0 to no and 1 to yes
+  int minimum_order_rand; // set a minimum size of a graph, in order to try a rand search
   ADJ_LIST * adj_list; // save and adj list, to have all neighbors
 } GRAPH;
 

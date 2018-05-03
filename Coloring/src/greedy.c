@@ -6,40 +6,34 @@ int greedycoloring(GRAPH *op)
   int *used;
   int c,n,u,v;
   int ncolors;
-  int maxcolorused;
+  int maxcolorused,vert_ngbr;
 
-  n = op->n;
-  ncolors = maxdegree(op);
+  n = op->order;
+  ncolors = op->maxdegree;
 
   used = malloc(ncolors * sizeof(uchar));
 
-  op->coloring[0] = 0;
-  for(v=1;v<n;v++)              // not yet colored
-    op->coloring[v] = NOCOLOR;
+  op->coloring[0] = 0; // color the first one already
+  for(v=1;v<n;v++)              
+    op->coloring[v] = NOCOLOR; // not yet colored
 
   for(v=1;v<n;v++){
-//
-// set the count to 0 for each color
-//
+    // initialize to 0, all colors
     memset(used,0,ncolors*sizeof(int));
-//
-//  count how many times each color is used on the neighbors of v
-//
-    for(u=0;u<n;u++)
-      if(op->a[u][v] && op->coloring[u] != NOCOLOR)
-        used[op->coloring[u]] = 1;
-//
-//  find a color that is not used
-//
+
+//  for each neighbor of V, set which color is not available, by checking which its neighbors are using
+    for(u=0; u<op->deg[v]; u++){
+      vert_ngbr = op->adj_list[v].nbrs[u];
+      if(op->coloring[vert_ngbr] != NOCOLOR)
+        used[op->coloring[vert_ngbr]] = 1;
+    }  
+
+//  Then, find a color that is not used to assign for that vertex
     for(c=0;c<ncolors;c++)
       if(!used[c])
         break;
-    if(c >= ncolors){
-      fprintf(stderr,"impossible? all colors are used at vertex %d\n", v);
-      exit(0);
-    }
     op->coloring[v] = c;
-    if(c > maxcolorused) maxcolorused = c;
+    maxcolorused = c > maxcolorused ? c:maxcolorused;
   }
   free(used);
   return maxcolorused + 1;

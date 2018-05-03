@@ -3,12 +3,12 @@
 
 
 int dfs_bipartite_check(int vertex, int color,GRAPH *op); 
-int get_vertex_not_colored(int N_vertices,GRAPH *op); // return a vertex that did not get colored after dfs
+int get_vertex_not_colored(int N_vertices,GRAPH *op); // return a vertex that did not get colored after dfs, if exists
 
 int bipartite(GRAPH *op)
 {
   int vertex =0, compontent=1, result = 0, vertex_not_colered = -1;
-  int n = op->n;
+  int n = op->order;
   for(int i=0;i<n;i++)              // not yet colored
     op->coloring[i] = NOCOLOR;
     
@@ -24,11 +24,12 @@ int bipartite(GRAPH *op)
       // from that node withot a color
       vertex_not_colered = get_vertex_not_colored(n,op);
       if(vertex_not_colered >=0){
-	printf("Graph is not connected, running dfs again for compontent %d and vertex %d.....\n",++compontent, vertex_not_colered);
-	vertex = vertex_not_colered;
+      	printf("Graph is not connected, running dfs again for compontent %d and vertex %d.....\n",++compontent, vertex_not_colered);
+      	vertex = vertex_not_colered;
+        op->is_graph_connected = 1;
       }
       else{ // you are then sure that everybody got colored and it's bipartite
-	return 1; //Graph is bipartite
+	     return 1; //Graph is bipartite
       }
       
     }
