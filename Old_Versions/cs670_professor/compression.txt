@@ -1,0 +1,4 @@
+-rw-r--r-- 1 ge root 1429211 Apr 17 13:59 x
+-rw-r--r-- 1 ge root   41753 Apr 17 13:59 x.gz
+-rw-r--r-- 1 ge root   27683 Apr 17 13:59 x.bz2
+-rw-r--r-- 1 ge root   15504 Apr 17 13:59 x.xz

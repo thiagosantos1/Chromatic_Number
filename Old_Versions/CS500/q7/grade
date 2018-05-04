@@ -1,0 +1,14 @@
+Quiz #7:
+q1:
+q2:
+q3:
+-1 Confusing, almost works though, shifts should be in multiples of 8 (bytes),
+   not 4 (hex digits)
+ - output of program (q3) is not correct for input 'AABBCCDD':
+------ Yours: ------
+aabbccdd -> bbccddaa
+---- Reference: ----
+aabbccdd -> ddccbbaa
+--------------------
+
+9.00 out of 10 Points.

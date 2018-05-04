@@ -1,0 +1,4 @@
+for i in {0..23}
+do
+  time a.out $i &
+done
