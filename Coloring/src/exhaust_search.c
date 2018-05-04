@@ -13,7 +13,6 @@ void return_status(GRAPH *op,int vertex);
 int domain_reduction(GRAPH *op,int vertex, int color);
 int pick_next_vertex(GRAPH *op);
 int how_many_bits_sets(int num, int mincolors);
-int foundSolution(int order);
 
 void exh_search(GRAPH *op,USER_PARAMS *ip)
 {
@@ -79,7 +78,7 @@ void init_default_colors(GRAPH *op)
 
 int coloring_CSP_constraint(GRAPH *op, int v,int vert_colored )
 {
-  if (vert_colored >= op->order -1){ // if all vertices has been colored
+  if (vert_colored >= op->order){ // if all vertices has been colored
       return 1;
   }else if(v >= op->order || v<0)
     return -1;
@@ -192,11 +191,3 @@ int how_many_bits_sets(int num, int mincolors)
   return result;
 }
 
-int foundSolution(int order)
-{
-  for (int i = 0; i <order; i++){
-    if(coloring_copy[i] == NOCOLOR)
-      return -1;
-  }
-  return 1;
-}
