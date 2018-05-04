@@ -2,7 +2,7 @@ CC     = gcc
 HDR1   = ../include/findcolor.h
 OPT    = -g -Wall
 CFLAGS = -c -I../include
-LIBS   =  -lpthread 
+LIBS   = -lcoloring -lpthread 
 OBJS   = makegraph.o greedy.o bipartite.o exhaust_search.o rand_search.o
 
 all: chromatic libcoloring.a
@@ -23,5 +23,6 @@ rand_search.o: rand_search.c $(HDR1)
 	$(CC) $(CFLAGS) $(OPT) rand_search.c
 libcoloring.a: $(OBJS)
 	ar rcs ../lib/$@ $(OBJS)
+
 clean:
 	rm -f *.o ../lib/*.a ../bin/chromatic

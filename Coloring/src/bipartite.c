@@ -4,6 +4,7 @@
 
 int dfs_bipartite_check(int vertex, int color,GRAPH *op); 
 int get_vertex_not_colored(int N_vertices,GRAPH *op); // return a vertex that did not get colored after dfs, if exists
+void print_coloring(int N_vertices,GRAPH *op);
 
 int bipartite(GRAPH *op)
 {
@@ -17,7 +18,7 @@ int bipartite(GRAPH *op)
     if(result <=0){ // you are then sure it's not bipartite
       return -1; //Graph is not bipartite
     }
-    
+        
     else{ // it may be a disconected graph. Then, it may be a false positive
       
       // then, check if everybody got a color. If so, you are sure it's bipartite. If not, have to run again the dfs
@@ -26,7 +27,7 @@ int bipartite(GRAPH *op)
       if(vertex_not_colered >=0){
       	printf("Graph is not connected, running dfs again for compontent %d and vertex %d.....\n",++compontent, vertex_not_colered);
       	vertex = vertex_not_colered;
-        op->is_graph_connected = 1;
+        op->is_graph_connected = 0;
       }
       else{ // you are then sure that everybody got colored and it's bipartite
 	     return 1; //Graph is bipartite
@@ -44,15 +45,13 @@ int dfs_bipartite_check(int vertex, int color,GRAPH *op)
   
   op->coloring[vertex] = color;
   color = color==Color_1 ? Color_2:Color_1;
-  
   for(i=0; i<op->deg[vertex]; i++){
     vert_ngbr = op->adj_list[vertex].nbrs[i];
     if(op->coloring[vert_ngbr] == NOCOLOR){
       flag = dfs_bipartite_check(vert_ngbr,color,op);
       if(flag<=0)
-	break;
-    } else if(op->coloring[vert_ngbr] == op->coloring[vertex]){
-    
+	     break;
+    }else if(op->coloring[vert_ngbr] == op->coloring[vertex]){
       return 0;
     }
   }
@@ -69,4 +68,13 @@ int get_vertex_not_colored(int N_vertices,GRAPH *op)
   
   return -1;
   
+}
+
+void print_coloring(int N_vertices,GRAPH *op)
+{
+  printf("Coloring after dfs\n");
+  for(int i=0; i< N_vertices; i++)
+    printf("%d ",op->coloring[i]);
+
+  printf("\n");
 }

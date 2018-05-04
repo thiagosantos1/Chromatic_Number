@@ -6,12 +6,12 @@ int greedycoloring(GRAPH *op)
   int *used;
   int c,n,u,v;
   int ncolors;
-  int maxcolorused,vert_ngbr;
+  int maxcolorused=0,vert_ngbr;
 
   n = op->order;
-  ncolors = op->maxdegree;
+  ncolors  = op->maxdegree;
 
-  used = malloc(ncolors * sizeof(uchar));
+  used = malloc(ncolors * sizeof(int));
 
   op->coloring[0] = 0; // color the first one already
   for(v=1;v<n;v++)              
@@ -35,7 +35,7 @@ int greedycoloring(GRAPH *op)
     op->coloring[v] = c;
     maxcolorused = c > maxcolorused ? c:maxcolorused;
   }
+
   free(used);
   return maxcolorused + 1;
 }
-

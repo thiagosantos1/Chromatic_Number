@@ -41,7 +41,19 @@ int makegraph(GRAPH *op, USER_PARAMS *ip)
   op->m = nedges;
   op->coloring = malloc(N * sizeof(int));
 
-  return 0;
+// allocate space and make list of neuighbors
 
+  op->nbr = malloc(N * sizeof(int *));
+  for(i=0;i<N;i++){
+    op->nbr[i] = malloc(op->deg[i] * sizeof(int));
+    for(j=k=0;j<N;j++)
+      if(op->a[i][j])
+        op->nbr[i][k++] = j;
+    if(k != op->deg[i]){
+      fprintf(stderr,"degree error: %d != %d\n", k, op->deg[i]);
+      exit(0);
+    }
+  }
+  return 0;
 }
 

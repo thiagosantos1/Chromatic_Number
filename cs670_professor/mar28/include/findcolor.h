@@ -30,6 +30,7 @@ typedef struct userdata {
 typedef struct graphdata {
   int n,m;        // order and size
   uchar **a;      // adjacency matrix
+  int **nbr;       // list of neighbors
   int *elist;     // list of edges, two entries per edge
   int *deg;       // vertex degrees
   int *coloring;  // best coloring found
