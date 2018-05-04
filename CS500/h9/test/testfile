@@ -1,7 +1,0 @@
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/root       888G  403G  485G  46% /
-devtmpfs        5.9G     0  5.9G   0% /dev
-tmpfs           5.9G  1.1M  5.9G   1% /run
-tmpfs           5.9G   33M  5.8G   1% /dev/shm
-cgroup_root     5.9G     0  5.9G   0% /sys/fs/cgroup
-cgmfs           100K     0  100K   0% /run/cgmanager/fs 

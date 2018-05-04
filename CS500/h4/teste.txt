@@ -1,3 +1,0 @@
-Filesystem     
-/dev/sda1      
-tmpfs       
